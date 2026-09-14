@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GASIMA HOSTING - Enterprise Infrastructure Console</title>
+    <!-- CSS Modular Loading -->
+    <link rel="stylesheet" href="./assets/css/variables.css">
+    <link rel="stylesheet" href="./assets/css/main.css">
+    <link rel="stylesheet" href="./assets/css/components.css">
+    <link rel="stylesheet" href="./assets/css/modules.css">
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Live Alert Ticker -->
+        <div class="marquee-container">
+            <div class="marquee-content" id="system-ticker">
+                [SYSTEM READY] CLUSTER ID-JKT-1 ONLINE // ALL TUNNELS SYNCHRONIZED // ANTI-DDOS L7 ENABLED // GASIMA KERNEL v4.1.0-ENTERPRISE
+            </div>
+        </div>
+
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar block">
+            <div class="brand">
+                GASIMA CLOUD
+                <span>by ikiygasima.my.id</span>
+            </div>
+            
+            <nav class="nav-menu">
+                <button class="nav-btn active" data-tab="dashboard">Dashboard Overview</button>
+                <button class="nav-btn" data-tab="vps">Compute & VPS</button>
+                <button class="nav-btn" data-tab="dns">DNS Manager & Domain</button>
+                <button class="nav-btn" data-tab="tunnel">Support Tunnel & SSH</button>
+                <button class="nav-btn" data-tab="finance">Billing & Saldo</button>
+                <button class="nav-btn" data-tab="access">Access Control & API</button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <span class="label">CURRENT BALANCE</span>
+                <div class="balance-display" id="sidebar-balance">Loading...</div>
+            </div>
+        </aside>
+
+        <!-- Main Display Content (SPA Modules) -->
+        <main class="main-content">
+            
+            <!-- MODULE: DASHBOARD -->
+            <section id="tab-dashboard" class="tab-content active">
+                <div class="block">
+                    <div class="section-title">
+                        <span>Main Node Status (ID-JKT DataCenter)</span>
+                        <span class="badge badge-success">● OPERATIONAL</span>
+                    </div>
+                    <div class="status-grid">
+                        <div class="status-item">
+                            <div class="circle-wrap">
+                                <svg><circle class="circle-bg" cx="40" cy="40" r="35"></circle><circle class="circle-progress" id="cpu-ring" cx="40" cy="40" r="35"></circle></svg>
+                                <div class="circle-text" id="cpu-val">0%</div>
+                            </div>
+                            <div class="status-label">CPU Load</div>
+                        </div>
+                        <div class="status-item">
+                            <div class="circle-wrap">
+                                <svg><circle class="circle-bg" cx="40" cy="40" r="35"></circle><circle class="circle-progress" id="ram-ring" cx="40" cy="40" r="35"></circle></svg>
+                                <div class="circle-text" id="ram-val">0%</div>
+                            </div>
+                            <div class="status-label">RAM Usage</div>
+                        </div>
+                        <div class="status-item">
+                            <div class="circle-wrap">
+                                <svg><circle class="circle-bg" cx="40" cy="40" r="35"></circle><circle class="circle-progress" id="disk-ring" cx="40" cy="40" r="35"></circle></svg>
+                                <div class="circle-text" id="disk-val">0%</div>
+                            </div>
+                            <div class="status-label">NVMe I/O Rate</div>
+                        </div>
+                        <div class="status-item">
+                            <div class="circle-wrap">
+                                <svg><circle class="circle-bg" cx="40" cy="40" r="35"></circle><circle class="circle-progress" id="net-ring" cx="40" cy="40" r="35"></circle></svg>
+                                <div class="circle-text" id="net-val">0%</div>
+                            </div>
+                            <div class="status-label">Bandwidth</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="block">
+                        <div class="section-title">Live System Logs</div>
+                        <div class="terminal" id="term-logs"></div>
+                    </div>
+                    <div class="block">
+                        <div class="section-title">Active Instances Quick Control</div>
+                        <div class="table-responsive">
+                            <table id="active-instances-table">
+                                <thead>
+                                    <tr><th>Instance</th><th>IP Address</th><th>Tunnel Port</th><th>Action</th></tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MODULE: VPS DEPLOYMENT -->
+            <section id="tab-vps" class="tab-content">
+                <div class="block">
+                    <div class="section-title">Deploy Cloud Compute Engine</div>
+                    <div class="vps-grid" id="vps-catalog"></div>
+                </div>
+            </section>
+
+            <!-- MODULE: DNS MANAGER & DOMAIN -->
+            <section id="tab-dns" class="tab-content">
+                <div class="block">
+                    <div class="section-title">DNS Record Manager & Domain Registrar</div>
+                    <div class="form-group">
+                        <input type="text" id="domain-search-input" placeholder="Cari Domain Baru (cth: ikiygasima)">
+                        <select id="domain-search-tld" style="max-width: 140px;">
+                            <option value=".my.id">.my.id</option>
+                            <option value=".id">.id</option>
+                            <option value=".com">.com</option>
+                            <option value=".net">.net</option>
+                        </select>
+                        <button class="action-btn" onclick="DomainModule.checkWHOIS()">WHOIS Lookup</button>
+                    </div>
+                    <div id="whois-result-box" class="info-box hidden"></div>
+                </div>
+
+                <div class="block">
+                    <div class="section-title">Zone DNS Management (ikiygasima.my.id)</div>
+                    <div class="form-inline">
+                        <input type="text" id="dns-name" placeholder="Name (@ / sub)">
+                        <select id="dns-type" style="max-width: 100px;">
+                            <option value="A">A</option>
+                            <option value="CNAME">CNAME</option>
+                            <option value="TXT">TXT</option>
+                            <option value="AAAA">AAAA</option>
+                        </select>
+                        <input type="text" id="dns-value" placeholder="Target IPv4 / String">
+                        <button class="action-btn" onclick="DomainModule.addDNSRecord()">+ Add Record</button>
+                    </div>
+                    <table class="data-table" id="dns-table">
+                        <thead><tr><th>Type</th><th>Name</th><th>Content</th><th>TTL</th><th>Action</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- MODULE: SUPPORT TUNNEL & SSH -->
+            <section id="tab-tunnel" class="tab-content">
+                <div class="block">
+                    <div class="section-title">Reverse Tunnel & Port Forwarding Gateway</div>
+                    <div class="grid-2">
+                        <div>
+                            <div class="form-group">
+                                <label>Protocol Type</label>
+                                <select id="tunnel-proto">
+                                    <option value="HTTP/HTTPS">HTTP / HTTPS Reverse Proxy</option>
+                                    <option value="TCP">Direct TCP Tunnel (SSH/Database)</option>
+                                    <option value="UDP">UDP Game Server Tunnel</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Local Target Port</label>
+                                <input type="number" id="tunnel-port" value="8080" placeholder="e.g. 8080, 3000, 22">
+                            </div>
+                            <button class="action-btn full-width" onclick="TunnelModule.createTunnel()">Activate Reverse Tunnel</button>
+                        </div>
+                        <div>
+                            <div class="terminal" id="tunnel-terminal-log">
+                                <p class="text-dim">> Tunnel Engine v2.0 Ready...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MODULE: FINANCE & BILLING -->
+            <section id="tab-finance" class="tab-content">
+                <div class="grid-2">
+                    <div class="block">
+                        <div class="section-title">Billing & Saldo Console</div>
+                        <div class="balance-card">
+                            <span>Available Balance</span>
+                            <h2 id="finance-main-balance">Rp 0</h2>
+                        </div>
+                        <div class="form-group">
+                            <input type="number" id="topup-input" placeholder="Nominal Top Up Saldo (Rp)">
+                            <button class="action-btn" onclick="FinanceModule.topUp()">Deposit</button>
+                        </div>
+                    </div>
+                    <div class="block">
+                        <div class="section-title">Audit Log Financial Mutation</div>
+                        <table class="data-table" id="mutation-table">
+                            <thead><tr><th>Description</th><th>Amount</th><th>Timestamp</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MODULE: ACCESS CONTROL & API -->
+            <section id="tab-access" class="tab-content">
+                <div class="block">
+                    <div class="section-title">Credential Access & API Keys Management</div>
+                    <div class="form-group-vertical">
+                        <label>USER / SYSTEM OWNER</label>
+                        <input type="text" value="ikiygasima" readonly>
+                        
+                        <label>DEFAULT DOMAIN ROUTER</label>
+                        <input type="text" value="ikiygasima.my.id" readonly>
+                        
+                        <label>VERCEL SYSTEM TOKEN</label>
+                        <input type="password" value="vck_gasima_89237482937489237489" readonly>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Modal Provisioning Instance -->
+    <div class="modal-overlay hidden" id="deploy-modal">
+        <div class="modal-box">
+            <div class="section-title">Deploy Instance Confirmation</div>
+            <p>Target Tier: <strong id="modal-tier-name"></strong></p>
+            <div class="form-group-vertical">
+                <label>Pilih Image Distribution OS</label>
+                <select id="modal-os-select">
+                    <option value="ubuntu-22.04">Ubuntu Server 22.04 LTS x64</option>
+                    <option value="debian-12">Debian 12 Bookworm</option>
+                    <option value="almalinux-9">AlmaLinux 9 Enterprise</option>
+                </select>
+            </div>
+            <div class="modal-pricing">
+                <span>Total Monthly Billing:</span>
+                <strong id="modal-tier-price">Rp 0</strong>
+            </div>
+            <div class="modal-actions">
+                <button class="action-btn" onclick="VPSModule.confirmDeploy()">Launch Instance</button>
+                <button class="action-btn btn-secondary" onclick="VPSModule.closeModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Modular Loading Architecture -->
+    <script src="./assets/js/state.js"></script>
+    <script src="./assets/js/modules/dashboard.js"></script>
+    <script src="./assets/js/modules/vps.js"></script>
+    <script src="./assets/js/modules/domain-dns.js"></script>
+    <script src="./assets/js/modules/tunnel.js"></script>
+    <script src="./assets/js/modules/finance.js"></script>
+    <script src="./assets/js/app.js"></script>
+</body>
+</html>
